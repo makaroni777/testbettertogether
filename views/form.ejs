@@ -1,0 +1,69 @@
+<%- include('partials/header'); -%>
+
+
+<form  action="/form">
+  <h2>Contract</h2>
+    <label for="id">Id</label>
+    <input type="text"  name="id">
+      <div class="id error"></div>
+    <label for="number">Number</label>
+    <input type="text"   name="number">
+      <div class="number error"></div>
+    <label for="product">Product</label>
+    <input type="text"  name="product">
+      <div class="product error"></div>
+    <label for="gtc">GTC</label>
+    <input type="text" name="gtc" >
+      <div class="gtc error"></div>
+    <button>Send</button>
+</form>
+
+<script>
+    const form = document.querySelector('form');
+    const idError = document.querySelector('.id.error');
+    const numberError = document.querySelector('.number.error');
+    const productError = document.querySelector('.product.error');
+    const gtcError = document.querySelector('.gtc.error');
+  
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+      // reset errors
+      idError.textContent = '';
+      numberError.textContent = '';
+      productError.textContent = '';
+      gtcError.textContent = '';
+
+  
+      // get values
+      const id = form.id.value;
+      const number = form.number.value;
+      const product = form.product.value;
+      const gtc = form.gtc.value;
+  
+      try {
+        const res = await fetch('/form', { 
+          method: 'POST', 
+          body: JSON.stringify({ id, number, product, gtc}),
+          headers: {'Content-Type': 'application/json'}
+        });
+        const data = await res.json();
+        console.log(data);
+        if (data.errors) {
+          idError.textContent = data.errors.id;
+          numberError.textContent = data.errors.number;
+          productError.textContent = data.errors.product;
+          gtcError.textContent = data.errors.gtc;
+        }
+        if (data.contract) {
+          location.assign('/');
+        }
+  
+      }
+      catch (err) {
+        console.log(err);
+      }
+    });
+  </script>
+
+<%- include('partials/footer'); -%>
